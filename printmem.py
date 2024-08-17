@@ -1,9 +1,12 @@
 import gc
 from micropython import mem_info
-def printmem(reason=None):
-    totalmem = 192064 #192064 is the total reported by mem_info
+def printmem(reason=None, heap=False, collect=True):
+    if collect: gc.collect()
+    freemem = gc.mem_free()
+    totalmem = gc.mem_alloc() + freemem
     print("\n" + "="*79)
     if reason: print(f"***{reason}***")
-    print(f"{(totalmem-gc.mem_free())/totalmem*100}% RAM used")
-    mem_info()
+    print(f"{(totalmem-freemem)/totalmem*100}% RAM used")
+    if heap: mem_info(1)
+    else: mem_info()
     print("="*79)
